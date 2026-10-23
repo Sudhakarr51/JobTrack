@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field_error %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7 col-lg-5">
+    <div class="card shadow-sm"><div class="card-body p-4">
+      <h1 class="h3 mb-3">Create your account</h1>
+      <form method="post" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" class="form-control {{ 'is-invalid' if errors.get('username') }}" id="username"
+                 name="username" value="{{ form.get('username', '') }}" autocomplete="username"
+                 aria-describedby="username-error" required autofocus>
+          {{ field_error(errors, 'username') }}
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control {{ 'is-invalid' if errors.get('email') }}" id="email"
+                 name="email" value="{{ form.get('email', '') }}" autocomplete="email"
+                 aria-describedby="email-error" required>
+          {{ field_error(errors, 'email') }}
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control {{ 'is-invalid' if errors.get('password') }}" id="password"
+                 name="password" autocomplete="new-password" aria-describedby="password-help password-error" required>
+          <div id="password-help" class="form-text">At least 8 characters, with a letter and a number.</div>
+          {{ field_error(errors, 'password') }}
+        </div>
+        <div class="mb-3">
+          <label for="confirm_password" class="form-label">Confirm password</label>
+          <input type="password" class="form-control {{ 'is-invalid' if errors.get('confirm_password') }}"
+                 id="confirm_password" name="confirm_password" autocomplete="new-password"
+                 aria-describedby="confirm_password-error" required>
+          {{ field_error(errors, 'confirm_password') }}
+        </div>
+        <button class="btn btn-primary w-100" type="submit">Register</button>
+      </form>
+      <p class="mt-3 mb-0 small">Already registered? <a href="{{ url_for('login') }}">Log in</a></p>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

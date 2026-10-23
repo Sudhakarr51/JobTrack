@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_badge %}
+{% block title %}{{ app['company'] }}{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div><h1 class="h3 mb-1">{{ app['job_title'] }}</h1>
+    <div class="text-muted">{{ app['company'] }} &middot; {{ status_badge(app['status']) }}</div></div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-primary" href="{{ url_for('application_edit', app_id=app['id']) }}">Edit</a>
+    <form method="post" action="{{ url_for('application_delete', app_id=app['id']) }}"
+          data-confirm="Delete the application to {{ app['company'] }}? This cannot be undone.">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn btn-outline-danger" type="submit">Delete</button></form>
+  </div>
+</div>
+<div class="card shadow-sm"><div class="card-body">
+  <dl class="row mb-0">
+    <dt class="col-sm-4">Job type</dt><dd class="col-sm-8">{{ app['job_type'] }}</dd>
+    <dt class="col-sm-4">Location</dt><dd class="col-sm-8">{{ app['location'] or '-' }}{% if app['is_remote'] %} (remote option){% endif %}</dd>
+    <dt class="col-sm-4">Job posting</dt><dd class="col-sm-8">
+      {% if app['job_url'] %}<a href="{{ app['job_url'] }}" target="_blank" rel="noopener noreferrer">{{ app['job_url'] }}</a>{% else %}-{% endif %}</dd>
+    <dt class="col-sm-4">Application date</dt><dd class="col-sm-8">{{ app['application_date']|pretty_date }}</dd>
+    <dt class="col-sm-4">Interview date</dt><dd class="col-sm-8">{{ app['interview_date']|pretty_date }}</dd>
+    <dt class="col-sm-4">Follow-up date</dt><dd class="col-sm-8">{{ app['follow_up_date']|pretty_date }}</dd>
+    <dt class="col-sm-4">Salary range</dt><dd class="col-sm-8">{{ app['salary_range'] or '-' }}</dd>
+    <dt class="col-sm-4">Notes</dt><dd class="col-sm-8 notes">{{ app['notes'] or '-' }}</dd>
+    <dt class="col-sm-4">Created</dt><dd class="col-sm-8">{{ app['created_at'] }} UTC</dd>
+    <dt class="col-sm-4">Last updated</dt><dd class="col-sm-8">{{ app['updated_at'] }} UTC</dd>
+  </dl>
+</div></div>
+<a class="btn btn-link mt-3 ps-0" href="{{ url_for('applications') }}">&larr; Back to all applications</a>
+{% endblock %}

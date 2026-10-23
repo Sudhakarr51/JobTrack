@@ -1,0 +1,9 @@
+{% macro status_badge(status) -%}
+{% set colours = {"Wishlist": "secondary", "Applied": "primary", "Assessment": "info",
+                  "Interview": "warning", "Offer": "success", "Rejected": "danger", "Withdrawn": "dark"} %}
+<span class="badge text-bg-{{ colours.get(status, 'secondary') }}">{{ status }}</span>
+{%- endmacro %}
+
+{% macro field_error(errors, name) -%}
+{% if errors and errors.get(name) %}<div class="invalid-feedback d-block" id="{{ name }}-error">{{ errors[name] }}</div>{% endif %}
+{%- endmacro %}

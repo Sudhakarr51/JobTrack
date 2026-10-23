@@ -1,0 +1,16 @@
+:root { --jt-blue: #2563eb; --jt-blue-dark: #1e40af; --jt-bg: #f5f7fb; }
+body { background: var(--jt-bg); color: #1f2937; min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1; }
+.bg-jt { background-color: var(--jt-blue-dark); }
+.text-jt { color: var(--jt-blue); }
+.btn-primary { --bs-btn-bg: var(--jt-blue); --bs-btn-border-color: var(--jt-blue);
+  --bs-btn-hover-bg: var(--jt-blue-dark); --bs-btn-hover-border-color: var(--jt-blue-dark); }
+a { color: var(--jt-blue); }
+.card { border: 1px solid #e5e7eb; border-radius: .75rem; }
+.stat-card { border-left: 4px solid var(--jt-blue); }
+.stat-applied { border-left-color: #2563eb; } .stat-assessment { border-left-color: #0891b2; }
+.stat-interview { border-left-color: #d97706; } .stat-offer { border-left-color: #16a34a; }
+.stat-rejected { border-left-color: #dc2626; } .stat-total { border-left-color: #475569; }
+.chart-box { position: relative; height: 300px; }
+.notes { white-space: pre-wrap; }
+:focus-visible { outline: 3px solid #93c5fd; outline-offset: 2px; }

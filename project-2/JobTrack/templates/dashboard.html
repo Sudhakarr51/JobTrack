@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_badge %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Dashboard</h1>
+  <a class="btn btn-primary" href="{{ url_for('application_new') }}">+ Add application</a>
+</div>
+
+{% if reminder %}
+  <div class="alert alert-{{ reminder_level }}" role="status">
+    {{ reminder }}
+    <div class="small mt-1">Reminders only appear here when you open JobTrack. No email or phone notifications are sent.</div>
+  </div>
+{% endif %}
+
+<div class="row g-3 mb-4">
+  {% for label, value, key in cards %}
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="card stat-card stat-{{ key }} h-100 shadow-sm"><div class="card-body">
+      <div class="text-muted small">{{ label }}</div>
+      <div class="display-6 fw-semibold">{{ value }}</div>
+    </div></div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if stats.total == 0 %}
+  <div class="card shadow-sm text-center p-5">
+    <h2 class="h4">Welcome to JobTrack!</h2>
+    <p class="text-muted">You have not added any applications yet. Add your first one to see your statistics and chart here.</p>
+    <div><a class="btn btn-primary" href="{{ url_for('application_new') }}">Add your first application</a></div>
+  </div>
+{% else %}
+<div class="row g-3 mb-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm h-100"><div class="card-body">
+      <h2 class="h5">Applications by status</h2>
+      <div class="chart-box">
+        <canvas id="statusChart" role="img" aria-label="Doughnut chart of applications grouped by status"></canvas>
+      </div>
+      <div id="chartError" class="alert alert-warning d-none mb-0" role="alert">
+        The chart could not be loaded (check your internet connection). The numbers above are still correct.
+      </div>
+      <script type="application/json" id="chart-data">{{ chart_data|tojson }}</script>
+    </div></div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card shadow-sm h-100"><div class="card-body">
+      <h2 class="h5">Interview analytics</h2>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item d-flex justify-content-between"><span>Total interviews</span><strong>{{ stats.interviews }}</strong></li>
+        <li class="list-group-item d-flex justify-content-between"><span>Offers received</span><strong>{{ stats.offers }}</strong></li>
+        <li class="list-group-item d-flex justify-content-between"><span>Interview conversion rate</span><strong>{{ stats.conversion_rate }}%</strong></li>
+      </ul>
+      <p class="small text-muted mt-3 mb-0">
+        Conversion rate = interviews &divide; submitted applications &times; 100.
+        Submitted = all applications except Wishlist. Interviews = submitted applications that have an
+        interview date or are currently in Interview or Offer status.
+        Currently {{ stats.interviews }} of {{ stats.submitted }}.
+      </p>
+    </div></div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card shadow-sm h-100"><div class="card-body">
+      <h2 class="h5">Upcoming interviews</h2>
+      {% for a in stats.upcoming_interviews %}
+        <div class="mb-2"><a href="{{ url_for('application_detail', app_id=a['id']) }}">{{ a['company'] }}</a>
+          <div class="small text-muted">{{ a['job_title'] }} &middot; {{ a['interview_date']|pretty_date }} ({{ a['interview_date']|days_away }})</div></div>
+      {% else %}<p class="text-muted mb-0">No upcoming interviews. Add an interview date to an application to see it here.</p>{% endfor %}
+    </div></div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card shadow-sm h-100"><div class="card-body">
+      <h2 class="h5">Follow-ups</h2>
+      {% for a in stats.overdue_followups %}
+        <div class="mb-2"><span class="badge text-bg-danger">Overdue</span>
+          <a href="{{ url_for('application_detail', app_id=a['id']) }}">{{ a['company'] }}</a>
+          <div class="small text-muted">{{ a['follow_up_date']|pretty_date }} ({{ a['follow_up_date']|days_away }})</div></div>
+      {% endfor %}
+      {% for a in stats.upcoming_followups %}
+        <div class="mb-2"><a href="{{ url_for('application_detail', app_id=a['id']) }}">{{ a['company'] }}</a>
+          <div class="small text-muted">{{ a['follow_up_date']|pretty_date }} ({{ a['follow_up_date']|days_away }})</div></div>
+      {% endfor %}
+      {% if not stats.overdue_followups and not stats.upcoming_followups %}
+        <p class="text-muted mb-0">No follow-ups scheduled.</p>{% endif %}
+    </div></div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card shadow-sm h-100"><div class="card-body">
+      <h2 class="h5">Recently added</h2>
+      {% for a in stats.recent %}
+        <div class="mb-2 d-flex justify-content-between align-items-start">
+          <div><a href="{{ url_for('application_detail', app_id=a['id']) }}">{{ a['company'] }}</a>
+            <div class="small text-muted">{{ a['job_title'] }}</div></div>
+          {{ status_badge(a['status']) }}
+        </div>
+      {% endfor %}
+    </div></div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if stats.total > 0 %}<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>{% endif %}
+{% endblock %}

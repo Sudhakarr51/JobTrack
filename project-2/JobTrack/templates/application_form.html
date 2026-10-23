@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field_error %}
+{% block title %}{{ 'Edit' if editing else 'Add' }} application{% endblock %}
+{% macro invalid(name) %}{{ 'is-invalid' if errors.get(name) }}{% endmacro %}
+{% block content %}
+<h1 class="h3 mb-3">{{ 'Edit application' if editing else 'Add application' }}</h1>
+<div class="card shadow-sm"><div class="card-body p-4">
+  <form method="post" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="row g-3">
+      <div class="col-md-6"><label for="company" class="form-label">Company name *</label>
+        <input type="text" class="form-control {{ invalid('company') }}" id="company" name="company" maxlength="100"
+               value="{{ form.get('company', '') }}" aria-describedby="company-error" required>{{ field_error(errors, 'company') }}</div>
+      <div class="col-md-6"><label for="job_title" class="form-label">Job title *</label>
+        <input type="text" class="form-control {{ invalid('job_title') }}" id="job_title" name="job_title" maxlength="100"
+               value="{{ form.get('job_title', '') }}" aria-describedby="job_title-error" required>{{ field_error(errors, 'job_title') }}</div>
+      <div class="col-md-4"><label for="job_type" class="form-label">Job type *</label>
+        <select class="form-select {{ invalid('job_type') }}" id="job_type" name="job_type" aria-describedby="job_type-error">
+          {% for t in JOB_TYPES %}<option value="{{ t }}" {{ 'selected' if form.get('job_type') == t }}>{{ t }}</option>{% endfor %}</select>
+        {{ field_error(errors, 'job_type') }}</div>
+      <div class="col-md-5"><label for="location" class="form-label">Location</label>
+        <input type="text" class="form-control {{ invalid('location') }}" id="location" name="location" maxlength="100"
+               value="{{ form.get('location', '') }}" aria-describedby="location-error">{{ field_error(errors, 'location') }}</div>
+      <div class="col-md-3 d-flex align-items-end"><div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" id="is_remote" name="is_remote" value="1" {{ 'checked' if form.get('is_remote') }}>
+        <label class="form-check-label" for="is_remote">Remote option</label></div></div>
+      <div class="col-12"><label for="job_url" class="form-label">Job posting URL</label>
+        <input type="url" class="form-control {{ invalid('job_url') }}" id="job_url" name="job_url" maxlength="500"
+               placeholder="https://..." value="{{ form.get('job_url', '') }}" aria-describedby="job_url-error">{{ field_error(errors, 'job_url') }}</div>
+      <div class="col-md-4"><label for="status" class="form-label">Status *</label>
+        <select class="form-select {{ invalid('status') }}" id="status" name="status" aria-describedby="status-error">
+          {% for s in STATUSES %}<option value="{{ s }}" {{ 'selected' if form.get('status') == s }}>{{ s }}</option>{% endfor %}</select>
+        {{ field_error(errors, 'status') }}</div>
+      <div class="col-md-4"><label for="application_date" class="form-label">Application date</label>
+        <input type="date" class="form-control {{ invalid('application_date') }}" id="application_date" name="application_date"
+               value="{{ form.get('application_date') or '' }}" aria-describedby="application_date-error">{{ field_error(errors, 'application_date') }}</div>
+      <div class="col-md-4"><label for="salary_range" class="form-label">Salary range (optional)</label>
+        <input type="text" class="form-control {{ invalid('salary_range') }}" id="salary_range" name="salary_range" maxlength="60"
+               placeholder="e.g. 5-7 LPA" value="{{ form.get('salary_range', '') }}" aria-describedby="salary_range-error">{{ field_error(errors, 'salary_range') }}</div>
+      <div class="col-md-6"><label for="interview_date" class="form-label">Interview date</label>
+        <input type="date" class="form-control {{ invalid('interview_date') }}" id="interview_date" name="interview_date"
+               value="{{ form.get('interview_date') or '' }}" aria-describedby="interview_date-error">{{ field_error(errors, 'interview_date') }}</div>
+      <div class="col-md-6"><label for="follow_up_date" class="form-label">Follow-up date</label>
+        <input type="date" class="form-control {{ invalid('follow_up_date') }}" id="follow_up_date" name="follow_up_date"
+               value="{{ form.get('follow_up_date') or '' }}" aria-describedby="follow_up_date-error">{{ field_error(errors, 'follow_up_date') }}</div>
+      <div class="col-12"><label for="notes" class="form-label">Notes</label>
+        <textarea class="form-control {{ invalid('notes') }}" id="notes" name="notes" rows="4" maxlength="2000"
+                  aria-describedby="notes-error">{{ form.get('notes', '') }}</textarea>{{ field_error(errors, 'notes') }}</div>
+    </div>
+    <div class="mt-4 d-flex gap-2">
+      <button class="btn btn-primary" type="submit">{{ 'Save changes' if editing else 'Add application' }}</button>
+      <a class="btn btn-outline-secondary" href="{{ url_for('application_detail', app_id=app['id']) if editing else url_for('applications') }}">Cancel</a>
+    </div>
+  </form>
+</div></div>
+{% endblock %}
